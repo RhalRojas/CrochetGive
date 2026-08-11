@@ -1,0 +1,32 @@
+{% extends "shop/base.html" %}
+{% block content %}
+
+<div class="donated-banner">
+    <strong>₱{{ donated.total }}</strong> donated so far
+    {% if donated.from_cache %}
+        <span class="tag cache-hit">from cache</span>
+    {% else %}
+        <span class="tag cache-miss">recalculated</span>
+    {% endif %}
+</div>
+
+<h2>Shop</h2>
+<form method="post" action="{% url 'checkout' %}">
+    {% csrf_token %}
+    <table>
+        <tr><th>Product</th><th>Price</th><th>Stock</th><th>Qty</th></tr>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.name }}</td>
+            <td>₱{{ product.price }}</td>
+            <td>{{ product.stock }}</td>
+            <td><input type="number" name="qty_{{ product.id }}" min="0" max="{{ product.stock }}" value="0"></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No products yet. Add some in the admin panel.</td></tr>
+        {% endfor %}
+    </table>
+    <button type="submit">Checkout</button>
+</form>
+
+{% endblock %}
